@@ -18,8 +18,7 @@ app.post("/users", (request, response) => {
   // Complete aqui
   const { name, username } = request.body;
   const alreadyExistsUser = users.some((item) => item.username === username);
-  console.log(users);
-  console.log(username);
+
   if (alreadyExistsUser) {
     return response.status(400).json({ error: "User already exists" });
   }
