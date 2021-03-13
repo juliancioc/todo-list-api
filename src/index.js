@@ -73,20 +73,29 @@ app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
   const verifyIfExistsTodo = user.todos.filter((item) => item.id === id);
 
   if (!verifyIfExistsTodo.length) {
-    return response.status(400).json({ error: "Todo not found" });
+    return response.status(404).json({ error: "Todo not found" });
   }
 
   let todo = user.todos.filter((item) => item.id === id);
-  todo[0].title = title
-  todo[0].deadline = deadline
-  delete todo[0].id
-  delete todo[0].created_at
+  todo[0].title = title;
+  todo[0].deadline = deadline;
+  delete todo[0].id;
+  delete todo[0].created_at;
 
   response.json(...todo);
 });
 
 app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { id } = request.params;
+  const { user } = request;
+  let todo = user.todos.filter((item) => item.id === id);
+
+  if (!todo.length) {
+    return response.status(404).json({ error: "Todo not found" });
+  }
+  todo[0].done = true
+
+  return response.json(...todo);
 });
 
 app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
