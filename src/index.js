@@ -11,11 +11,19 @@ app.use(express.json());
 const users = [];
 
 function checksExistsUserAccount(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers;
+  const user = users.find((user) => user.username === username);
+
+  if (!user) {
+    return response.status(400).json({ error: "User not found" });
+  }
+
+  request.user = user;
+
+  return next();
 }
 
 app.post("/users", (request, response) => {
-  // Complete aqui
   const { name, username } = request.body;
   const alreadyExistsUser = users.some((item) => item.username === username);
 
@@ -36,11 +44,26 @@ app.post("/users", (request, response) => {
 });
 
 app.get("/todos", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+
+  return response.json(user.todos);
 });
 
 app.post("/todos", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { title, deadline } = request.body;
+  const { user } = request;
+
+  const todo = {
+    id: uuidv4(),
+    title: title,
+    done: false,
+    deadline: deadline,
+    created_at: "2021-02-22T00:00:00.000Z",
+  };
+
+  user.todos.push(todo);
+
+  return response.status(201).json(todo);
 });
 
 app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
